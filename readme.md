@@ -31,10 +31,10 @@ Simply open `index.html` in a browser. No installation is required!
 ---
 
 ## **🌟 Screenshots**
-📸 ![The landing page](prayer\Screenshot(4).png)
-📸 ![The qibla direction page](prayer\Screenshot(5).png)
-📸 ![Settings menu](prayer\Screenshot(6).png)
-📸 ![Dark theme](prayer\Screenshot(7).png)
+📸 ![The landing page](Screenshot(4).png)
+📸 ![The qibla direction page](Screenshot(5).png)
+📸 ![Settings menu](Screenshot(6).png)
+📸 ![Dark theme](Screenshot(7).png)
 
 
 ---
