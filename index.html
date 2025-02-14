@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayer Time App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+
+<body onclick="closeSettingsOnClick(event)">
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <h1>PRAYER PRO</h1>
+        <p>Observe Namaz</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container" id="main-content">
+        <h2>PRAYER PRO</h2>
+        <div class="clock" id="clock"></div>
+        <p id="location">Fetching location...</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Prayer</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody id="prayer-times">
+                <tr>
+                    <td>🌅Sunrise</td>
+                    <td id="sunrise">--:--</td>
+                </tr>
+                <tr>
+                    <td>🌅Sunset</td>
+                    <td id="sunset">--:--</td>
+                </tr>
+                <tr>
+                    <td>🧎🏻Fajr</td>
+                    <td id="fajr">--:--</td>
+                </tr>
+                
+                <tr>
+                    <td>🧎🏻Dhuhr</td>
+                    <td id="dhuhr">--:--</td>
+                </tr>
+                <tr>
+                    <td>🧎🏻Asr</td>
+                    <td id="asr">--:--</td>
+                </tr>
+                <tr>
+                    <td>🧎🏻Maghrib</td>
+                    <td id="maghrib">--:--</td>
+                </tr>
+                <tr>
+                    <td>🧎🏻Isha</td>
+                    <td id="isha">--:--</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Qibla Finder -->
+    <div class="qibla-container" id="qibla-content" style="display: none;">
+        <h2>Qibla Direction</h2>
+        <p>Align the compass to find the correct direction.</p>
+        <div id="compass"></div>
+        <button class="qiblabutton" onclick="requestCompassAccess()">Enable Compass</button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button onclick="showPrayerTimes()">Prayer</button>
+        <button onclick="showQiblaFinder()">Qibla</button>
+        <button onclick="showSettings()">⚙ Settings</button>
+    </div>
+
+    
+</body>
+
+</html>

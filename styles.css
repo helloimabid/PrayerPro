@@ -1,0 +1,161 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+/* Splash Screen */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #6a11cb;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: fadeOut 2s ease-in-out forwards;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+
+/* Main Container */
+.container {
+    padding: 20px;
+}
+
+/* Prayer Table */
+table {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: white;
+    color: black;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #6a11cb;
+    color: white;
+}
+
+/* Qibla Finder */
+.qibla-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+#compass {
+    width: 100px;
+    height: 100px;
+    margin: 20px auto;
+    border-radius: 50%;
+    border: 5px solid white;
+    position: relative;
+}
+
+#compass::after {
+    content: '\2191';
+    font-size: 50px;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+.bottom-nav button, .compassbutton {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 10px;
+    transition: 0.3s;
+}
+.qiblalink{
+    text-decoration: none;
+}
+
+.bottom-nav button, .compassbutton:hover {
+    transform: scale(1.1);
+}
+/* Settings Panel */
+#settings-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    
+}
+
+#settings-panel h2 {
+    margin: 0 0 10px;
+    color: #6a11cb;
+}
+
+#settings-panel input,
+#settings-panel button,.qiblabutton {
+    margin: 10px;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+#settings-panel button, .qiblabutton {
+    background: #6a11cb;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dark Mode */
+.dark-mode {
+    background: #222;
+    color: white;
+}
+.clock::before{
+    content: "Current Time: ";
+}
+
+.togglelabel{
+    color: black;
+}
