@@ -32,20 +32,19 @@ function useManualOrGeoLocation() {
   }
 }
 
- function setupCompass() {
-   if (window.DeviceOrientationEvent) {
-     window.addEventListener("deviceorientation", (event) => {
-       if (event.alpha !== null) {
-         document.getElementById(
-           "compass"
-         ).style.transform = `rotate(${event.alpha}deg)`;
-       }
-     });
-   } else {
-     document.getElementById("compass").textContent = "Compass not supported";
-   }
+function setupCompass() {
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener("deviceorientation", (event) => {
+      if (event.alpha !== null) {
+        document.getElementById(
+          "compass"
+        ).style.transform = `rotate(${event.alpha}deg)`;
+      }
+    });
+  } else {
+    document.getElementById("compass").textContent = "Compass not supported";
+  }
 }
- 
 
 function getUserLocation() {
   if (navigator.geolocation) {
@@ -63,9 +62,11 @@ function fetchPrayerTimesByCity(city) {
   const apiUrl = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=&method=2`;
   fetch(apiUrl)
     .then((response) => response.json())
-      .then((data) => updatePrayerTimes(data.data.timings),
-      document.getElementById("location").textContent =
-          "Prayer times for " + city)
+    .then(
+      (data) => updatePrayerTimes(data.data.timings),
+      (document.getElementById("location").textContent =
+        "Prayer times for " + city)
+    )
     .catch(
       () =>
         (document.getElementById("location").textContent =
@@ -90,12 +91,10 @@ function updatePrayerTimes(timings) {
   document.getElementById("dhuhr").textContent = timings.Dhuhr;
   document.getElementById("asr").textContent = timings.Asr;
   document.getElementById("maghrib").textContent = timings.Maghrib;
-    document.getElementById("isha").textContent = timings.Isha;
-    document.getElementById("sunrise").textContent = timings.Sunrise;
-    document.getElementById("sunset").textContent = timings.Sunset;
+  document.getElementById("isha").textContent = timings.Isha;
+  document.getElementById("sunrise").textContent = timings.Sunrise;
+  document.getElementById("sunset").textContent = timings.Sunset;
 }
-
-
 
 function showSettings() {
   let settingsPanel = document.getElementById("settings-panel");
@@ -131,16 +130,16 @@ function closeSettings() {
   document.getElementById("settings-panel").style.display = "none";
 }
 function toggleDarkMode() {
-    let darkModeEnabled = document.getElementById("darkModeToggle").checked;
-    if (darkModeEnabled) {
-        document.body.classList.add("dark-mode");
-        localStorage.setItem("darkMode", "enabled");
-       
-        useManualOrGeoLocation();
-    } else {
-        document.body.classList.remove("dark-mode");
-        localStorage.setItem("darkMode", "disabled");
-    }
+  let darkModeEnabled = document.getElementById("darkModeToggle").checked;
+  if (darkModeEnabled) {
+    document.body.classList.add("dark-mode");
+    localStorage.setItem("darkMode", "enabled");
+
+    useManualOrGeoLocation();
+  } else {
+    document.body.classList.remove("dark-mode");
+    localStorage.setItem("darkMode", "disabled");
+  }
 }
 
 function closeSettingsOnClick(event) {
@@ -150,13 +149,16 @@ function closeSettingsOnClick(event) {
     settingsPanel.style.display === "block" &&
     !settingsPanel.contains(event.target)
   ) {
-    // closeSettings();
+    // closeSettings();//this is not working and i was not able to figure out why
   }
 }
 
 function showQiblaFinder() {
   document.getElementById("main-content").style.display = "none";
   document.getElementById("qibla-content").style.display = "block";
+  //(if any bangladeshi is reading)এতক্ষণে... অবশেষ কাজ শেষ আর একটু
+  // বিভীষণের প্রতি মেঘনাদ কবিতা একটু মনে পড়লো এই আরকি
+  // 🤧
 }
 
 function showPrayerTimes() {
@@ -164,10 +166,11 @@ function showPrayerTimes() {
   document.getElementById("qibla-content").style.display = "none";
 }
 
- setInterval(updateClock, 1000);
+setInterval(updateClock, 1000);
 
-        function updateClock() {
-            const currentTime = new Date();
-            const clockElement = document.getElementById("clock");
-            clockElement.textContent = currentTime.toLocaleTimeString();
-        }
+function updateClock() {
+  const currentTime = new Date();
+  const clockElement = document.getElementById("clock");
+  clockElement.textContent = currentTime.toLocaleTimeString();
+}
+// And btw your are reading my code wow now i am famous hehe boi 😁

@@ -31,7 +31,11 @@ Simply open `index.html` in a browser. No installation is required!
 ---
 
 ## **🌟 Screenshots**
-📸 *Showcase your app! Add screenshots here.*
+📸 ![The landing page](prayer\Screenshot(4).png)
+📸 ![The qibla direction page](prayer\Screenshot(5).png)
+📸 ![Settings menu](prayer\Screenshot(6).png)
+📸 ![Dark theme](prayer\Screenshot(7).png)
+
 
 ---
 

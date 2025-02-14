@@ -1,4 +1,3 @@
-/* General Styles */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -8,7 +7,6 @@ body {
     padding: 0;
 }
 
-/* Splash Screen */
 #splash-screen {
     position: fixed;
     top: 0;
@@ -28,12 +26,10 @@ body {
     100% { opacity: 0; display: none; }
 }
 
-/* Main Container */
 .container {
     padding: 20px;
 }
 
-/* Prayer Table */
 table {
     width: 100%;
     max-width: 400px;
@@ -55,7 +51,6 @@ th {
     color: white;
 }
 
-/* Qibla Finder */
 .qibla-container {
     text-align: center;
     margin-top: 30px;
@@ -80,7 +75,6 @@ th {
     transform: translate(-50%, -50%);
 }
 
-/* Bottom Navigation */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -109,7 +103,6 @@ th {
 .bottom-nav button, .compassbutton:hover {
     transform: scale(1.1);
 }
-/* Settings Panel */
 #settings-panel {
     position: fixed;
     top: 50%;
@@ -125,7 +118,7 @@ th {
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    
+
 }
 
 #settings-panel h2 {
@@ -147,7 +140,6 @@ th {
     cursor: pointer;
 }
 
-/* Dark Mode */
 .dark-mode {
     background: #222;
     color: white;

@@ -10,13 +10,12 @@
 </head>
 
 <body onclick="closeSettingsOnClick(event)">
-    <!-- Splash Screen -->
+
     <div id="splash-screen">
         <h1>PRAYER PRO</h1>
         <p>Observe Namaz</p>
     </div>
 
-    <!-- Main Content -->
     <div class="container" id="main-content">
         <h2>PRAYER PRO</h2>
         <div class="clock" id="clock"></div>
@@ -62,7 +61,6 @@
         </table>
     </div>
 
-    <!-- Qibla Finder -->
     <div class="qibla-container" id="qibla-content" style="display: none;">
         <h2>Qibla Direction</h2>
         <p>Align the compass to find the correct direction.</p>
@@ -70,7 +68,6 @@
         <button class="qiblabutton" onclick="requestCompassAccess()">Enable Compass</button>
     </div>
 
-    <!-- Bottom Navigation -->
     <div class="bottom-nav">
         <button onclick="showPrayerTimes()">Prayer</button>
         <button onclick="showQiblaFinder()">Qibla</button>
