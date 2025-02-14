@@ -1,25 +1,174 @@
-
-
-
 document.addEventListener("DOMContentLoaded", function () {
   setTimeout(
     () => (document.getElementById("splash-screen").style.display = "none"),
     2000
   );
-
 });
-// Create a new Date object for the current date
 const currentDate = new Date();
 
-
-const day = String(currentDate.getDate()).padStart(2, '0');  
-const month = String(currentDate.getMonth() + 1).padStart(2, '0');  
-const year = currentDate.getFullYear();  
+const day = String(currentDate.getDate()).padStart(2, "0");
+const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+const year = currentDate.getFullYear();
 
 const formattedDate = `${day}-${month}-${year}`;
+const qiblaDirection = 278;
 
+// function fetchUserLocation() {
+//   const apiKey = "10b09b1e447240a0a46b84a1fd06660b";
+//   const url = `https://api.geoapify.com/v1/ipinfo?apiKey=${apiKey}`;
 
-function requestCompassAccess() {
+//   fetch(url)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       if (data && data.location) {
+//         const latitude = data.location.latitude;
+//         const longitude = data.location.longitude;
+//         const city = data.city.name;
+
+//         fetchPrayerTimings(latitude, longitude);
+//       } else {
+//         console.error("Location data not available.");
+//       }
+//     })
+//     .catch((error) => {
+//       console.error("Error fetching location:", error);
+//       alert("Unable to get your location.");
+//     });
+//   return latitude, longitude, city;
+// }
+function fetchUserLocation() {
+  const apiKey = "10b09b1e447240a0a46b84a1fd06660b";
+  const url = `https://api.geoapify.com/v1/ipinfo?apiKey=${apiKey}`;
+
+  return new Promise((resolve, reject) => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data.location) {
+          const latitude = data.location.latitude;
+          const longitude = data.location.longitude;
+          const city = data.city.name;
+
+          // Now we can fetch prayer timings
+          fetchPrayerTimings(latitude, longitude, city);
+
+          resolve({ latitude, longitude, city }); // Resolving the data
+        } else {
+          console.error("Location data not available.");
+          reject("Location data not available");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching location:", error);
+        alert("Unable to get your location.");
+        reject(error);
+      });
+  });
+}
+
+// function fetchqiblaDirection() {
+//   fetch(`https://api.aladhan.com/v1/qibla/{latitude}/{longitude}`).then((response) => response.json()).then((data) => {
+//     const qiblaDirection = data.direction;
+//     console.log(qiblaDirection);
+//   });
+
+// }
+
+function fetchQiblaDirection(latitude, longitude) {
+  // Fetch Qibla direction from Aladhan API
+  fetch(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "OK" && data.data.direction) {
+        const qiblaDirection = data.data.direction; // Get the direction from the API response
+        console.log("Qibla direction: ", qiblaDirection); // You can log it to confirm
+
+        // Now use this direction value for your compass
+        updateCompass(qiblaDirection);
+      } else {
+        console.error("Failed to fetch Qibla direction.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching Qibla direction:", error);
+    });
+}
+
+function updateCompass(qiblaDirection) {
+  // Assuming you already have a compass arrow element
+  const arrow = document.querySelector(".arrow");
+
+  // Get device orientation (alpha) to adjust the rotation of the compass arrow
+  function handleOrientation(event) {
+    let alpha;
+    if (event.webkitCompassHeading) {
+      alpha = event.webkitCompassHeading; // iOS
+    } else {
+      alpha = event.alpha; // Non-iOS
+    }
+
+    // Calculate the rotation angle to point towards Qibla
+    const rotation = qiblaDirection - alpha;
+
+    // Rotate the arrow based on the calculated rotation
+    arrow.style.transform = `translate(-50%, -100%) rotate(${rotation}deg)`;
+  }
+
+  // Request permission for iOS (if needed)
+  function requestPermission() {
+    if (
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function"
+    ) {
+      DeviceOrientationEvent.requestPermission()
+        .then((permissionState) => {
+          if (permissionState === "granted") {
+            window.addEventListener(
+              "deviceorientation",
+              handleOrientation,
+              true
+            );
+          } else {
+            alert("Permission to access device orientation was denied.");
+          }
+        })
+        .catch(console.error);
+    } else {
+      // Handle non iOS 13+ devices
+      window.addEventListener("deviceorientation", handleOrientation, true);
+    }
+  }
+
+  // Initialize the permission request
+  requestPermission();
+}
+
+// Example usage:
+// Fetch the user's location and then get Qibla direction
+fetchUserLocation().then(({ latitude, longitude }) => {
+  fetchQiblaDirection(latitude, longitude); // Fetch Qibla direction based on location
+});
+
+function handleOrientation(event) {
+  let alpha;
+
+  // Check for iOS property
+  if (event.webkitCompassHeading) {
+    alpha = event.webkitCompassHeading; // iOS
+  } else {
+    alpha = event.alpha; // Non-iOS
+  }
+
+  // Calculate the rotation angle to point towards Qibla
+  const rotation = qiblaDirection - alpha;
+
+  // Rotate the arrow to point towards Qibla
+  const arrow = document.querySelector(".arrow");
+  arrow.style.transform = `translate(-50%, -100%) rotate(${rotation}deg)`;
+}
+
+// Request permission for iOS 13+ devices
+function requestPermission() {
   if (
     typeof DeviceOrientationEvent !== "undefined" &&
     typeof DeviceOrientationEvent.requestPermission === "function"
@@ -27,56 +176,21 @@ function requestCompassAccess() {
     DeviceOrientationEvent.requestPermission()
       .then((permissionState) => {
         if (permissionState === "granted") {
-          setupCompass();
+          window.addEventListener("deviceorientation", handleOrientation, true);
+        } else {
+          alert("Permission to access device orientation was denied.");
         }
       })
       .catch(console.error);
   } else {
-    setupCompass();
+    // Handle non iOS 13+ devices
+    window.addEventListener("deviceorientation", handleOrientation, true);
   }
 }
 
+// Initialize the compass
+requestPermission();;
 
-
-function setupCompass() {
-  if (window.DeviceOrientationEvent) {
-    window.addEventListener("deviceorientation", (event) => {
-      if (event.alpha !== null) {
-        document.getElementById(
-          "compass"
-        ).style.transform = `rotate(${event.alpha}deg)`;
-      }
-    });
-  } else {
-    document.getElementById("compass").textContent = "Compass not supported";
-  }
-}
-
-
-function fetchUserLocation() {
-    const apiKey = "10b09b1e447240a0a46b84a1fd06660b";
-  const url = `https://api.geoapify.com/v1/ipinfo?apiKey=${apiKey}`;
-
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      if (data && data.location) {
-        const latitude = data.location.latitude;
-        const longitude = data.location.longitude;
-          const city = data.city;
-          
-        
-          fetchPrayerTimings(latitude, longitude);
-          
-      } else {
-        console.error('Location data not available.');
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching location:', error);
-      alert('Unable to get your location.');
-    });
-}
 
 function getNextPrayerTime(timings) {
   const now = new Date();
@@ -128,10 +242,10 @@ function displayNextPrayer(timings) {
   document.getElementById("next-prayer-time").textContent = nextPrayerTime;
 }
 function fetchPrayerTimings(latitude, longitude, city) {
-    const today = new Date();
-    
-  const day = String(today.getDate()).padStart(2, '0');
-  const month = String(today.getMonth() + 1).padStart(2, '0'); 
+  const today = new Date();
+
+  const day = String(today.getDate()).padStart(2, "0");
+  const month = String(today.getMonth() + 1).padStart(2, "0");
   const year = today.getFullYear();
 
   const currentDate = `${day}-${month}-${year}`;
@@ -139,14 +253,14 @@ function fetchPrayerTimings(latitude, longitude, city) {
   const url = `https://api.aladhan.com/v1/timingsByAddress/${currentDate}?address=${latitude},${longitude}&method=8`;
 
   fetch(url)
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => response.json())
+    .then((data) => {
       const timings = data.data.timings;
-      displayPrayerTimings(timings); 
-      displayNextPrayer(timings); 
+      displayPrayerTimings(timings);
+      displayNextPrayer(timings);
     })
-    .catch(error => {
-      console.error('Error fetching prayer timings:', error);
+    .catch((error) => {
+      console.error("Error fetching prayer timings:", error);
     });
 }
 function countdownToNextPrayer(timings) {
@@ -174,7 +288,6 @@ function countdownToNextPrayer(timings) {
   }
 }
 
-
 window.onload = fetchUserLocation;
 
 function displayPrayerTimings(timings) {
@@ -184,8 +297,7 @@ function displayPrayerTimings(timings) {
   document.getElementById("maghrib").textContent = timings.Maghrib;
   document.getElementById("isha").textContent = timings.Isha;
   document.getElementById("sunrise").textContent = timings.Sunrise;
-    document.getElementById("sunset").textContent = timings.Sunset;
-    
+  document.getElementById("sunset").textContent = timings.Sunset;
 }
 
 function showSettings() {
@@ -226,7 +338,6 @@ function toggleDarkMode() {
   if (darkModeEnabled) {
     document.body.classList.add("dark-mode");
     localStorage.setItem("darkMode", "enabled");
-
   } else {
     document.body.classList.remove("dark-mode");
     localStorage.setItem("darkMode", "disabled");
@@ -246,7 +357,7 @@ function closeSettingsOnClick(event) {
 
 function showQiblaFinder() {
   document.getElementById("main-content").style.display = "none";
-  document.getElementById("qibla-content").style.display = "block";
+  document.getElementById("qibla-content").style.display = "flex";
   //(if any bangladeshi is reading)এতক্ষণে... অবশেষ কাজ শেষ আর একটু
   // বিভীষণের প্রতি মেঘনাদ কবিতা একটু মনে পড়লো এই আরকি
   // 🤧
