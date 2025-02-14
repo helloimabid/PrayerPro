@@ -1,10 +1,23 @@
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
   setTimeout(
     () => (document.getElementById("splash-screen").style.display = "none"),
     2000
   );
-  useManualOrGeoLocation();
+
 });
+// Create a new Date object for the current date
+const currentDate = new Date();
+
+
+const day = String(currentDate.getDate()).padStart(2, '0');  
+const month = String(currentDate.getMonth() + 1).padStart(2, '0');  
+const year = currentDate.getFullYear();  
+
+const formattedDate = `${day}-${month}-${year}`;
+
 
 function requestCompassAccess() {
   if (
@@ -23,14 +36,7 @@ function requestCompassAccess() {
   }
 }
 
-function useManualOrGeoLocation() {
-  let savedLocation = localStorage.getItem("savedLocation");
-  if (savedLocation) {
-    fetchPrayerTimesByCity(savedLocation);
-  } else {
-    getUserLocation();
-  }
-}
+
 
 function setupCompass() {
   if (window.DeviceOrientationEvent) {
@@ -46,54 +52,140 @@ function setupCompass() {
   }
 }
 
-function getUserLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) =>
-        fetchPrayerTimes(position.coords.latitude, position.coords.longitude),
-      () => useFallbackLocation()
+
+function fetchUserLocation() {
+    const apiKey = "10b09b1e447240a0a46b84a1fd06660b";
+  const url = `https://api.geoapify.com/v1/ipinfo?apiKey=${apiKey}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.location) {
+        const latitude = data.location.latitude;
+        const longitude = data.location.longitude;
+          const city = data.city;
+          
+        
+          fetchPrayerTimings(latitude, longitude);
+          
+      } else {
+        console.error('Location data not available.');
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching location:', error);
+      alert('Unable to get your location.');
+    });
+}
+
+function getNextPrayerTime(timings) {
+  const now = new Date();
+  const prayerTimes = [
+    { name: "Fajr", time: timings.Fajr },
+    { name: "Dhuhr", time: timings.Dhuhr },
+    { name: "Asr", time: timings.Asr },
+    { name: "Maghrib", time: timings.Maghrib },
+    { name: "Isha", time: timings.Isha },
+  ];
+
+  prayerTimes.forEach((prayer) => {
+    const [hours, minutes] = prayer.time.split(":");
+    prayer.time = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      hours,
+      minutes
     );
-  } else {
-    useFallbackLocation();
+  });
+
+  prayerTimes.sort((a, b) => a.time - b.time);
+
+  for (let i = 0; i < prayerTimes.length; i++) {
+    if (prayerTimes[i].time > now) {
+      return prayerTimes[i];
+    }
+  }
+
+  const nextDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1
+  );
+  const nextPrayer = prayerTimes[0];
+  nextPrayer.time.setDate(nextDay.getDate());
+  return nextPrayer;
+}
+
+function displayNextPrayer(timings) {
+  const nextPrayer = getNextPrayerTime(timings);
+  const nextPrayerName = nextPrayer.name;
+  const nextPrayerTime = nextPrayer.time.toLocaleTimeString();
+
+  document.getElementById(
+    "next-prayer-name"
+  ).textContent = `Next Prayer: ${nextPrayerName}`;
+  document.getElementById("next-prayer-time").textContent = nextPrayerTime;
+}
+function fetchPrayerTimings(latitude, longitude, city) {
+    const today = new Date();
+    
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0'); 
+  const year = today.getFullYear();
+
+  const currentDate = `${day}-${month}-${year}`;
+
+  const url = `https://api.aladhan.com/v1/timingsByAddress/${currentDate}?address=${latitude},${longitude}&method=8`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const timings = data.data.timings;
+      displayPrayerTimings(timings); 
+      displayNextPrayer(timings); 
+    })
+    .catch(error => {
+      console.error('Error fetching prayer timings:', error);
+    });
+}
+function countdownToNextPrayer(timings) {
+  const nextPrayer = getNextPrayerTime(timings);
+  const now = new Date();
+  const timeDifference = nextPrayer.time - now;
+
+  const countdownElement = document.getElementById("next-prayer-time");
+
+  if (timeDifference > 0) {
+    const countdownInterval = setInterval(() => {
+      const remainingTime = nextPrayer.time - new Date();
+      if (remainingTime <= 0) {
+        clearInterval(countdownInterval);
+        countdownElement.textContent = `It's time for ${nextPrayer.name}!`;
+      } else {
+        const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+        const minutes = Math.floor(
+          (remainingTime % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+        countdownElement.textContent = `${hours}h ${minutes}m ${seconds}s remaining`;
+      }
+    }, 1000);
   }
 }
 
-function fetchPrayerTimesByCity(city) {
-  const apiUrl = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=&method=2`;
-  fetch(apiUrl)
-    .then((response) => response.json())
-    .then(
-      (data) => updatePrayerTimes(data.data.timings),
-      (document.getElementById("location").textContent =
-        "Prayer times for " + city)
-    )
-    .catch(
-      () =>
-        (document.getElementById("location").textContent =
-          "Error fetching data")
-    );
-}
 
-function fetchPrayerTimes(lat, lon) {
-  const apiUrl = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`;
-  fetch(apiUrl)
-    .then((response) => response.json())
-    .then((data) => updatePrayerTimes(data.data.timings))
-    .catch(
-      () =>
-        (document.getElementById("location").textContent =
-          "Error fetching data")
-    );
-}
+window.onload = fetchUserLocation;
 
-function updatePrayerTimes(timings) {
+function displayPrayerTimings(timings) {
   document.getElementById("fajr").textContent = timings.Fajr;
   document.getElementById("dhuhr").textContent = timings.Dhuhr;
   document.getElementById("asr").textContent = timings.Asr;
   document.getElementById("maghrib").textContent = timings.Maghrib;
   document.getElementById("isha").textContent = timings.Isha;
   document.getElementById("sunrise").textContent = timings.Sunrise;
-  document.getElementById("sunset").textContent = timings.Sunset;
+    document.getElementById("sunset").textContent = timings.Sunset;
+    
 }
 
 function showSettings() {
@@ -135,7 +227,6 @@ function toggleDarkMode() {
     document.body.classList.add("dark-mode");
     localStorage.setItem("darkMode", "enabled");
 
-    useManualOrGeoLocation();
   } else {
     document.body.classList.remove("dark-mode");
     localStorage.setItem("darkMode", "disabled");

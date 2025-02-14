@@ -15,11 +15,12 @@
         <h1>PRAYER PRO</h1>
         <p>Observe Namaz</p>
     </div>
+    <div class="container2">
 
-    <div class="container" id="main-content">
-        <h2>PRAYER PRO</h2>
-        <div class="clock" id="clock"></div>
-        <p id="location">Fetching location...</p>
+        <div class="container" id="main-content">
+            <h2>PRAYER PRO</h2>
+            <div class="clock" id="clock"></div>
+            <div class="date" id="date"></div>
         <table>
             <thead>
                 <tr>
@@ -57,9 +58,19 @@
                     <td>🧎🏻Isha</td>
                     <td id="isha">--:--</td>
                 </tr>
+                <tr>
+                    <td id="next-prayer-container">
+                        <span id="next-prayer-name">--:--</span>
+                    </td>
+                    <td id="next-prayer-time">--:--</td>
+                </tr>
             </tbody>
         </table>
+        
     </div>
+</div>
+    
+
 
     <div class="qibla-container" id="qibla-content" style="display: none;">
         <h2>Qibla Direction</h2>
@@ -73,7 +84,8 @@
         <button onclick="showQiblaFinder()">Qibla</button>
         <button onclick="showSettings()">⚙ Settings</button>
     </div>
-
+    
+    <script type="module" src="script.js"></script>
     
 </body>
 
